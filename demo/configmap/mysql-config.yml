@@ -1,0 +1,121 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-dev
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: test-dev
+  labels:
+    app: mysql
+data:
+  mysql.cnf-0: >-
+    [mysqld]
+    skip-name-resolve
+    skip-networking=0
+    bind-address=0.0.0.0
+    default-time-zone=+09:00
+    character-set-server=utf8mb4
+
+    sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+    collation-server=utf8mb4_unicode_ci
+
+    max_allowed_packet=20M
+    max_connections=2000
+    explicit_defaults_for_timestamp=true
+
+---
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: test-dev
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      volumes:
+        - name: config-mount
+          configMap:
+            name: mysql-config
+            items:
+              - key: mysql.cnf-0
+                path: etc/mysql/conf.d/mysql.cnf
+            defaultMode: 493
+        - name: data-path
+          hostPath:
+            path: /home/mysql/data
+            type: ''
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          envFrom:
+            - configMapRef:
+              name: mysql-env
+              optional: true
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: wenke666
+            - name: TZ
+              value: Asia/Shanghai
+          resources:
+            limits:
+              cpu: 1
+              ephemeral-storage: 10Gi
+            requests:
+              cpu: 500m
+              ephemeral-storage: 10Gi
+              memory: 1Gi
+          volumeMounts:
+            - name: config-mount
+              mountPath: /etc/mysql/conf.d/mysql.cnf
+              subPath: mysql.cnf
+            - name: data-path
+              mountPath: /var/lib/mysql
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGrancePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+      enableServiceLinks: false
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: test-dev
+  labels:
+    app: mysql
+spec:
+  ports:
+    - name: port3306
+      protocol: TCP
+      port: 3306
+      targetPort: 3306
+      nodePort: 31280
+  selector:
+    app: mysql
+  type: NodePort
+  sessionAffinity: None
+  externalTrafficPolicy: Cluster
+
+
+
+    
+
+
