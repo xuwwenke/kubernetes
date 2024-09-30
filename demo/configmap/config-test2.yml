@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test2-config
+  labels:
+    app: test2-config
+data:
+  test2.config: |
+    api_token: 123456789
+    api_url: https://api.example.com
+    api_port: 443
+    api_path: /api/v1
+    api_timeout: 30
+    api_retries: 3

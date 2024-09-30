@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-config
+data: 
+  api_url: https://api.github.com
+  api_token: 1234567890

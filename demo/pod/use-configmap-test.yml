@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: use-configmap-test
+  labels:
+    app: use-configmap-test
+spec:
+  containers:
+    - name: use-configmap-test
+      image: nginx
+      env:
+        - name: API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: configmap-test
+              key: api_url
+        - name: API_TOKEN
+          valueFrom:
+            configMapKeyRef:
+              name: configmap-test
+              key: api_token

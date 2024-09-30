@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pd
+  labels:
+    app: test-pd
+spec:
+  containers:
+    - name: test-pd-container
+      image: python:3.6
+      envFrom:
+        - configMapRef:
+            name: test-config
