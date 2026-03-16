@@ -1,0 +1,18 @@
+# mlflow-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mlflow-config
+  namespace: mlflow
+data:
+  # 数据库连接字符串（不含密码）
+  MLFLOW_DB_HOST: "postgres"
+  MLFLOW_DB_PORT: "5432"
+  MLFLOW_DB_NAME: "mlflow"
+  MLFLOW_DB_USER: "mlflow"
+  # Artifact 存储配置
+  MLFLOW_S3_ENDPOINT_URL: "http://minio:9000"   # MinIO S3 API 地址
+  MLFLOW_BUCKET_NAME: "mlflow"                  # 之前创建的 bucket 
+  # MLflow Server 监听地址
+  MLFLOW_HOST: "0.0.0.0"
+  MLFLOW_PORT: "5000"
