@@ -27,6 +27,8 @@ spec:
         - "--default-artifact-root"
         - "s3://$(MLFLOW_BUCKET)/"
         - "--serve-artifacts"
+        - "--cors-allowed-origins"
+        - "*"
         ports:
         - containerPort: 5000
         env:
